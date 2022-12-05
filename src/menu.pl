@@ -21,7 +21,8 @@ manageInput(48) :-
 
 manageInput(49) :-
     clear,
-    write('Starting Player vs Player game\n').
+    write('Starting Player vs Player game\n'),
+    game.
     %...
 
 manageInput(50) :-
