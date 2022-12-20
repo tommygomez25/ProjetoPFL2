@@ -3,44 +3,53 @@ piece_at(Row, Col, Piece) :-
   nth0(Row, Board, RowList),
   nth0(Col, RowList, Piece).
 
-% verifica se as posições novas são permitidas
 valid_position(NumRows, NumCols, Row, Col) :-
   Row >= 0,
   Row < NumRows,
   Col >= 0,
   Col < NumCols.
 
+% Check if the given piece is valid
+valid_piece(Piece) :-
+  % Check if the jumper is on the board
+  piece_at(Row, Col, Piece),
+  % Check if the jumper belongs to the current player
+  current_player(Player),
+  player(Piece, Player).
 
-% gera uma lista com todos os moves possíveis para os jumpers
-valid_jumper_moves(Row,Col,Moves) :-
-    findall([NewRow,NewCol], (
-        (jump(Row,Col,NewRow,NewCol);
-        move(Row,Col,NewRow,NewCol)),
-        piece_at(NewRow,NewCol,empty)
-    ), Moves).
+% Check if the given piece belongs to the given player
+player(Piece, red) :-
+  piece_at(_, _, Piece),
+  Piece \= black_jumper,
+  Piece \= black_slipper.
+player(Piece, black) :-
+  piece_at(_, _, Piece),
+  Piece \= red_jumper,
+  Piece \= red_slipper.
 
-% gera uma lista com todos os moves possíveis para os slippers
-valid_slipper_moves(Row, Col, Moves) :-
-  findall(Move, valid_slipper_move(Row, Col,Move), Moves).
+% Print the list of pieces
+print_pieces(Pieces) :-
+  format('Pieces:~n',[]),
+  maplist(print_piece,Pieces).
 
-valid_slipper_move(Row, Col, Move) :-
-  % Move the slipper one cell to the right
-  NewCol is Col + 1,
-  \+ member((Row, NewCol), Moves),
-  valid_position(10,10,Row,NewCol),
-  piece_at(Row, NewCol, empty),
-  valid_slipper_moves(Row, NewCol, SubMoves),
-  append([(Row, NewCol)], SubMoves, Move).
+% Print a piece
+print_piece(Piece) :-
+  format('~w~n',[Piece]).
 
-valid_slipper_move(Row, Col, Move) :-
-  % Move the slipper one cell to the left
-  NewCol is Col - 1,
-  \+ member((Row, NewCol), Moves),
-  valid_position(10,10,Row,NewCol),
-  piece_at(Row, NewCol, empty),
-  valid_slipper_moves(Row, NewCol, SubMoves),
-  append([(Row, NewCol)], SubMoves, Move).
+% Check if the given number is a valid piece number
+valid_piece_number(PieceNumber, Pieces) :-
+  PieceNumber >= 0,
+  length(Pieces,Length),
+  PieceNumber < Length.
 
+filter([], _, []). % base case: if the list is empty, the filtered list is also empty
+filter([X|Xs], Y, [X|Zs]) :- % recursive case: if X is equal to Y,
+  X = Y,
+  filter(Xs, Y, Zs).
+filter([X|Xs], Y, Zs) :- % recursive case: if X is not equal to Y,
+  X \= Y,
+  filter(Xs, Y, Zs).
+/*
 % jumper move down
 jump(Row, Col, NewRow, NewCol) :-
   NewRow is Row + 2,
@@ -60,3 +69,5 @@ jump(Row, Col, NewRow, NewCol) :-
   BetweenCol is Col,
   piece_at(BetweenRow ,BetweenCol, Piece),
   Piece \= empty.
+*/
+  

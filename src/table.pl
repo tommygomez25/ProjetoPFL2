@@ -1,21 +1,22 @@
-initBoard([[jumper(red), empty, empty, empty, jumper(red), empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, jumper(black),empty, empty, empty, empty, jumper(black)],
-             [jumper(red), empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, jumper(black)],
-             [jumper(red), empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, jumper(black)],
-             [jumper(red), empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, jumper(black)],
-             [jumper(red), empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, jumper(black)]]).
+initBoard([[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty,black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]).
 
-symbol(jumper(red), 'R').
-symbol(jumper(black),'B').
+symbol(red_jumper, 'R').
+symbol(black_jumper,'B').
 symbol(empty, '|').
 
 game:-
     initBoard(Board),
-    print_board(Board).
+    play_turn
+    
     
 
 print_board(Board):-
@@ -56,4 +57,3 @@ print_line([Head|Tail]):-
     symbol(Head, S),
     format('--~s', [S]),
     print_line(Tail).
-    
