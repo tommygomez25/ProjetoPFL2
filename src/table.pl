@@ -1,13 +1,17 @@
-initBoard([[red_j, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_j],
-             [red_j, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_j],
-             [red_j, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_j],
-             [red_j, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_j],
-             [red_j, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_j]]).
+initBoard([[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty,black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]).
+
+symbol(red_jumper, 'R').
+symbol(black_jumper,'B').
+symbol(empty, '|').
 
 %piece(X, Y, type).
 piece(0,0, red_j). piece(9,1, black_j).
@@ -16,16 +20,9 @@ piece(0,4, red_j). piece(9,5, black_j).
 piece(0,6, red_j). piece(9,7, black_j).
 piece(0,8, red_j). piece(9,9, black_j).
 
-symbol(red_j, 'R').
-symbol(black_j,'B').
-symbol(empty, '|').
-
 game:-
     initBoard(Board),
     print_board(Board).
-
-%generate_board(-Board)
-generate_board(Board):-
     
 
 

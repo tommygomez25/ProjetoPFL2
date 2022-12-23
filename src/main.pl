@@ -1,5 +1,5 @@
 :- consult('menu.pl').
 :- consult('table.pl').
-
-play:-
-    menu.
+:- consult('utils.pl').
+:- consult('game.pl').
+:- use_module(library(lists)).
