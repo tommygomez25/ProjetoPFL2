@@ -70,4 +70,24 @@ jump(Row, Col, NewRow, NewCol) :-
   piece_at(BetweenRow ,BetweenCol, Piece),
   Piece \= empty.
 */
+
+replace_in_2d_list(List, Row, Col, NewValue, Result) :-
+    nth0(Row, List, OldRow, Prefix),
+    replace_in_list(Col, NewValue, OldRow, NewRow),
+    append(Prefix, [NewRow|Suffix], Result),
+    remove_from_list(Row, List, Suffix).
+
+replace_in_list(0, X, [_|Xs], [X|Xs]).
+replace_in_list(N, X, [Y|Xs], [Y|Ys]) :-
+    N > 0,
+    N1 is N - 1,
+    replace_in_list(N1, X, Xs, Ys).
+
+remove_from_list(0, [_|Xs], Xs).
+remove_from_list(N, [Y|Xs], [Y|Ys]) :-
+    N > 0,
+    N1 is N - 1,
+    remove_from_list(N1, Xs, Ys).
+
+
   
