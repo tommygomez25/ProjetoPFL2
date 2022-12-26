@@ -1,4 +1,4 @@
-initBoard([[  red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, empty, empty],
+initBoard([[red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, empty, empty],
              [empty, empty, empty, black_jumper,empty,empty, empty, empty, empty, black_jumper],
              [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
              [empty, empty, empty, empty, empty, empty, empty, empty, empty,black_jumper],
@@ -11,15 +11,18 @@ initBoard([[  red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, 
 
 symbol(red_jumper, 'R').
 symbol(black_jumper,'B').
-symbol(empty, '|').
+symbol(empty, '+').
+symbol(red,'D').
+symbol(black,'K').
 
+/*
 %piece(X, Y, type).
 piece(0,0, red_jumper). piece(9,1, black_jumper).
 piece(0,2, red_jumper). piece(9,3, black_jumper).
 piece(0,4, red_jumper). piece(9,5, black_jumper).
 piece(0,6, red_jumper). piece(9,7, black_jumper).
 piece(0,8, red_jumper). piece(9,9, black_jumper).    
-
+*/
 
 print_letters(Size, Size).
 

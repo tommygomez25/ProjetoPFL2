@@ -1,29 +1,42 @@
-piece_at(Row, Col, Piece) :-
-  initBoard(Board),
-  nth0(Row, Board, RowList),
-  nth0(Col, RowList, Piece).
+piece_at(Board,Row, Col, Piece) :-
+  nth1(Row, Board, RowList),
+  nth1(Col, RowList, Piece).
 
 valid_position(NumRows, NumCols, Row, Col) :-
-  Row >= 0,
+  Row >= 1,
   Row < NumRows,
-  Col >= 0,
+  Col >= 1,
   Col < NumCols.
 
+get_coordinates(Player,X, Y) :-
+    write('Enter the coordinates of the piece you wish to move (X Y): '),
+    % Read a string from the current input
+    read_string(current_input,"\n", "\r\t ",End,InputString),
+    % Split the string with " " as delimiter
+    split_string(InputString, " ", "", [XString, YString]),
+    % Convert the atoms to numbers
+    atom_number(XString, X), atom_number(YString, Y).
+
 % Check if the given piece is valid
-valid_piece(Piece) :-
-  % Check if the jumper is on the board
-  piece_at(Row, Col, Piece),
-  % Check if the jumper belongs to the current player
+valid_piece(Board,X,Y) :-
+  % Check if the given coordinates are within the board borders
+  valid_position(11,11,X,Y),
+  % Check if the piece is on the board
+  piece_at(Board,X, Y, Piece),
+  % Check if the piece belongs to the current player
   current_player(Player),
-  player(Piece, Player).
+  player(Board,Piece, Player).
 
 % Check if the given piece belongs to the given player
-player(Piece, red) :-
-  piece_at(_, _, Piece),
+player(Board,Piece, red) :-
+  piece_at(Board,_, _, Piece),
+  Piece \= empty,
   Piece \= black_jumper,
   Piece \= black_slipper.
-player(Piece, black) :-
-  piece_at(_, _, Piece),
+
+player(Board,Piece, black) :-
+  piece_at(Board,_, _, Piece),
+  Piece \= empty,
   Piece \= red_jumper,
   Piece \= red_slipper.
 
@@ -36,12 +49,6 @@ print_pieces(Pieces) :-
 print_piece(Piece) :-
   format('~w~n',[Piece]).
 
-% Check if the given number is a valid piece number
-valid_piece_number(PieceNumber, Pieces) :-
-  PieceNumber >= 0,
-  length(Pieces,Length),
-  PieceNumber < Length.
-
 filter([], _, []). % base case: if the list is empty, the filtered list is also empty
 filter([X|Xs], Y, [X|Zs]) :- % recursive case: if X is equal to Y,
   X = Y,
@@ -49,45 +56,30 @@ filter([X|Xs], Y, [X|Zs]) :- % recursive case: if X is equal to Y,
 filter([X|Xs], Y, Zs) :- % recursive case: if X is not equal to Y,
   X \= Y,
   filter(Xs, Y, Zs).
-/*
-% jumper move down
-jump(Row, Col, NewRow, NewCol) :-
-  NewRow is Row + 2,
-  NewCol is Col,
-  valid_position(10, 10, NewRow, NewCol).
-  BetweenRow is Row + 1,
-  BetweenCol is Col,
-  piece_at(BetweenRow ,BetweenCol, Piece),
-  Piece \= empty.
 
-%jumper move up
-jump(Row, Col, NewRow, NewCol) :-
-  NewRow is Row - 2,
-  NewCol is Col,
-  valid_position(10, 10, NewRow, NewCol).
-  BetweenRow is Row - 1,
-  BetweenCol is Col,
-  piece_at(BetweenRow ,BetweenCol, Piece),
-  Piece \= empty.
-*/
+print_moves([]).
+print_moves([(X,Y)|T]) :-
+  write(' ('), write(X), write(','),write(Y),write(') '),
+  print_moves(T).
 
-replace_in_2d_list(List, Row, Col, NewValue, Result) :-
-    nth0(Row, List, OldRow, Prefix),
-    replace_in_list(Col, NewValue, OldRow, NewRow),
-    append(Prefix, [NewRow|Suffix], Result),
-    remove_from_list(Row, List, Suffix).
 
-replace_in_list(0, X, [_|Xs], [X|Xs]).
-replace_in_list(N, X, [Y|Xs], [Y|Ys]) :-
-    N > 0,
-    N1 is N - 1,
-    replace_in_list(N1, X, Xs, Ys).
+replace_board_value_row([_|Tail],1,Value,[Value|Tail]).
 
-remove_from_list(0, [_|Xs], Xs).
-remove_from_list(N, [Y|Xs], [Y|Ys]) :-
-    N > 0,
-    N1 is N - 1,
-    remove_from_list(N1, Xs, Ys).
+replace_board_value_row([Head|Tail],Column,Value,[Head|NewTail]) :-
+    % write('\ndentro do replace_board_value_row\n'),
+    Column > 1,
+    Column1 is Column - 1,
+    replace_board_value_row(Tail,Column1,Value,NewTail).
 
+replace_board_value([Head|Tail],1,Column,Value,[NewHead|Tail]) :-
+    % write('\ndentro do replace_board_value com row a 0\n'),
+    % write(Column),nl,
+    replace_board_value_row(Head,Column,Value,NewHead).
+
+replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
+    % write('\ndentro do replace_board_value\n'),
+    Row > 1,
+    Row1 is Row - 1,
+    replace_board_value(Tail,Row1,Column,Value,NewTail).
 
   

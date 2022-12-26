@@ -18,35 +18,36 @@ play :-
   game(Board).
 
 game(Board):-
+  % Print the playing board
   print_board(Board),
 
   % Get the current player
   current_player(Player),
 
   % Prompt the user to choose a piece
-  format('Choose a piece(red_jumper/red_slipper/black_jumper/black_slipper):~n',[]),
-  read(Piece),
-  valid_piece(Piece),
+  get_coordinates(Player,X,Y),
+  valid_piece(Board,X,Y),
+  piece_at(Board,X,Y,Piece),
+  
 
-  % Get a list with all pieces on the board and filter it to only have the input piece
-  %findall(P,piece_at(_,_,P),Pieces),
-  %filter(Pieces,Piece,NewPieces),
-  %print_pieces(NewPieces),
+  % Get the valid moves for the current piece
+  (player(Board,Piece, Player),
+   valid_jumper_moves(Board, X, Y, Moves1)
+   ;
+   valid_slipper_moves(Board, X, Y, Moves2)),
 
-  % Prompt the user to choose a piece from the available pieces
-  format('Choose a ~w:~n',[Piece]),
-  read((OldRow, OldCol)),
-  %valid_piece_number(PieceNumber,NewPieces),
+  % Display the available moves
+  write('Valid moves: '),
+  (Moves1 \= [], print_moves(Moves1) ; Moves2 \= [], print_moves(Moves2)),
 
-  %Get the valid moves for the current piece
-  %valid_moves(Piece, Moves),
-  (valid_jumper_moves(OldRow, OldCol, Moves);
-  valid_slipper_moves(OldRow, OldCol, Moves)),
+
   % Choose a move
-  choose_move(Player, Moves, Row, Col),
+  (Moves1 \= [], choose_move(Player, Moves1, [], NewRow, NewCol)
+   ;
+   Moves2 \= [], choose_move(Player, [], Moves2, NewRow, NewCol)),
 
   % Make the move
-  make_move(Board, Player,OldRow, OldCol, Row, Col, Board2),
+  make_move(Board, Player,X, Y, NewRow, NewCol, Board2),
 
   
   % Switch to the other player
@@ -59,24 +60,52 @@ game(Board):-
 
 
 % Predicate to choose a move from the list of valid moves
-choose_move(Player, Moves, Row, Col) :-
+choose_move(Player, [], Moves2, Row, Col) :-
   % Prompt the player to choose a move
-  format('Player ~w, choose a move:~n', [Player]),
-  % Display the valid moves
-  maplist(write, Moves),
+  format('~nPlayer ~w, choose a move (X Y):~n', [Player]),
   % Read the chosen move from the player
-  read((Row, Col)),
+  read_line_to_string(current_input, InputString),
+  % Split the string with " " as delimiter
+  split_string(InputString, " ", "", [XString, YString]),
+  % Convert the atoms to numbers
+  atom_number(XString, Row), atom_number(YString, Col),
   % Check if the chosen move is valid
-  member((Row, Col), Moves).
+  member((Row,Col),Moves2).
+
+% Predicate to choose a move from the list of valid moves
+choose_move(Player, Moves1, [], Row, Col) :-
+  % Prompt the player to choose a move
+  format('~nPlayer ~w, choose a move (X Y):~n', [Player]),
+  % Read the chosen move from the player
+  read_line_to_string(current_input, InputString),
+  % Split the string with " " as delimiter
+  split_string(InputString, " ", "", [XString, YString]),
+  % Convert the atoms to numbers
+  atom_number(XString, Row), atom_number(YString, Col),
+  % Check if the chosen move is valid
+  member((Row, Col), Moves1).
 
 % Predicate to make a move on the board
 make_move(Board, Player,OldRow, OldCol, NewRow, NewCol, NewBoard) :-
-  %Place the piece on the board
-  %piece_at(Row, Col, empty),
-  %retract(piece_at(Row, Col, empty)),
-  %assert(piece_at(Row, Col, Player)).
-  replace_in_2d_list(Board, OldRow, OldCol, empty, NewBoard1),
-  replace_in_2d_list(NewBoard1, NewRow, NewCol, Player, NewBoard).
+  % Calculate the between row and col
+  JumpRow is (OldRow + NewRow) // 2,
+  JumpCol is (OldCol + NewCol) // 2,
+  % Check if it is from the other player
+  (piece_at(Board, JumpRow, JumpCol, PieceJumped),
+   player(Board, PieceJumped, OtherPlayer),
+   OtherPlayer \= Player,
+   other_player(Player, SlipperColor),
+   piece_at(Board, OldRow, OldCol, Piece),
+   replace_board_value(Board, OldRow, OldCol, empty, NBoard),
+   replace_board_value(NBoard, NewRow, NewCol, Piece, NBoard2),
+   replace_board_value(NBoard2, JumpRow, JumpCol, SlipperColor, NewBoard)
+   ;
+   % If there is no jumper between the old position and the new position,
+   % just make the move without removing any piece
+   piece_at(Board, OldRow, OldCol, Piece),
+   replace_board_value(Board, OldRow, OldCol, empty, NBoard),
+   replace_board_value(NBoard, NewRow, NewCol, Piece, NewBoard)).
+
 /*
 % Predicate to check if the game is over
 game_over(Winner) :-
@@ -98,6 +127,128 @@ other_player(red, black).
 other_player(black, red).
 
 
+% Generate the list of valid moves for a slipper starting from the given position
+valid_slipper_moves(Board,Row, Col, Moves) :-
+  valid_slipper_move_right(Board,Row, Col, MovesR),
+  valid_slipper_move_left(Board,Row, Col, MovesL),
+  append(MovesL, MovesR, Moves).
+
+valid_slipper_move_right(Board,Row, Col, Move) :-
+  %Move the slipper one cell to the right
+  NewCol is Col + 1,
+  valid_position(10, 10, Row, NewCol),
+  piece_at(Board,Row, NewCol, empty),
+  valid_slipper_move_right(Board,Row, NewCol, SubMoves),
+  append([(Row, NewCol)], SubMoves, Move),
+  !.
+
+% Generate a list of valid moves for a slipper
+valid_slipper_move_right(Board,Row, Col, Move):-
+  NewCol is Col + 1,
+  \+piece_at(Board,Row, NewCol, empty),
+  reverse(Move, Move).
+
+valid_slipper_move_right(_,_, _, Move):-
+  append([],[],Move).
+
+
+valid_slipper_move_left(Board,Row, Col, Move) :-
+  % Move the slipper one cell to the left
+  NewCol is Col - 1,
+  valid_position(10, 10, Row, NewCol),
+  piece_at(Board,Row, NewCol, empty),
+  valid_slipper_move_left(Board,Row, NewCol, SubMoves),
+  append(SubMoves, [(Row, NewCol)], Move),
+  !.
+
+% Generate a list of valid moves for a slipper
+valid_slipper_move_left(Board,Row, Col, Move):-
+  NewCol is Col - 1,
+  \+piece_at(Board,Row, NewCol, empty),
+  reverse(Move, Move).
+
+valid_slipper_move_left(_,_, _, Move):-
+  append([],[],Move).
+
+
+
+
+% Generate the list of valid moves for a jumper starting from the given position
+valid_jumper_moves(Board,Row, Col, Moves) :-
+  piece_at(Board,Row, Col, red_jumper),
+  valid_jumper_move_right(Board,Row, Col, MovesR),
+  valid_jumper_move_left(Board,Row, Col, MovesL),
+  append(MovesL, MovesR, MovesT),
+  EnemyRow is Row + 1,
+  EmptyRow is Row + 2,
+  (piece_at(Board,EnemyRow, Col, black_jumper);
+  piece_at(Board,EnemyRow, Col, black_slipper)),
+  piece_at(Board,EmptyRow, Col, empty),
+  append(MovesT,[(EmptyRow, Col)], Moves),
+  !.
+
+
+valid_jumper_moves(Board,Row, Col, Moves) :-
+  piece_at(Board,Row, Col, black_jumper),
+  valid_jumper_move_right(Board,Row, Col, MovesR),
+  valid_jumper_move_left(Board,Row, Col, MovesL),
+  append(MovesL, MovesR, MovesT),
+  EnemyRow is Row + 1,
+  EmptyRow is Row + 2,
+  (piece_at(Board,EnemyRow, Col, red_jumper);
+  piece_at(Board,EnemyRow, Col, red_slipper)),
+  piece_at(Board,EmptyRow, Col, empty),
+  append(MovesT,[(EmptyRow, Col)], Moves)
+  ,!.
+
+
+valid_jumper_moves(Board,Row, Col, Moves) :-
+  (piece_at(Board,Row, Col, red_jumper);
+  piece_at(Board,Row, Col, black_jumper)),
+  valid_jumper_move_right(Board,Row, Col, MovesR),
+  valid_jumper_move_left(Board,Row, Col, MovesL),
+  append(MovesL, MovesR, Moves).
+  
+
+valid_jumper_move_right(Board,Row, Col, Move) :-
+  %Move the jumper one cell to the right
+  NewCol is Col + 1,
+  valid_position(10, 10, Row, NewCol),
+  piece_at(Board,Row, NewCol, empty),
+  valid_jumper_move_right(Board,Row, NewCol, SubMoves),
+  append([(Row, NewCol)], SubMoves, Move),
+  !.
+
+% Generate a list of valid moves for a jumper
+valid_jumper_move_right(Board,Row, Col, Move):-
+  NewCol is Col + 1,
+  \+piece_at(Board,Row, NewCol, empty),
+  reverse(Move, Move).
+
+valid_jumper_move_right(_,_, _, Move):-
+  append([],[],Move).
+
+
+valid_jumper_move_left(Board,Row, Col, Move) :-
+  % Move the jumper one cell to the left
+  NewCol is Col - 1,
+  valid_position(10, 10, Row, NewCol),
+  piece_at(Board,Row, NewCol, empty),
+  valid_jumper_move_left(Board,Row, NewCol, SubMoves),
+  append(SubMoves, [(Row, NewCol)], Move),
+  !.
+
+% Generate a list of valid moves for a jumper
+valid_jumper_move_left(Board,Row, Col, Move):-
+  NewCol is Col - 1,
+  valid_position(10, 10, Row, NewCol),
+  \+piece_at(Board,Row, NewCol, empty),
+  reverse(Move, Move).
+
+valid_jumper_move_left(_,_, _, Move):-
+  append([],[],Move).
+
+/*
 % Generate the list of valid moves for the given player
 valid_moves(Player, Moves) :-
   findall(Move, valid_piece_move(Player, Move), Moves).
@@ -119,124 +270,4 @@ valid_piece_move(red_slipper, Move) :-
 valid_piece_move(black_slipper, Move) :-
   piece_at(Row, Col, black_slipper),
   valid_slipper_moves(Row, Col, Move).
-  
-% Generate the list of valid moves for a slipper starting from the given position
-valid_slipper_moves(Row, Col, Moves) :-
-  valid_slipper_move_right(Row, Col, MovesR),
-  valid_slipper_move_left(Row, Col, MovesL),
-  append(MovesL, MovesR, Moves).
-
-valid_slipper_move_right(Row, Col, Move) :-
-  %Move the slipper one cell to the right
-  NewCol is Col + 1,
-  valid_position(10, 10, Row, NewCol),
-  piece_at(Row, NewCol, empty),
-  valid_slipper_move_right(Row, NewCol, SubMoves),
-  append([(Row, NewCol)], SubMoves, Move),
-  !.
-
-% Generate a list of valid moves for a slipper
-valid_slipper_move_right(Row, Col, Move):-
-  NewCol is Col + 1,
-  \+piece_at(Row, NewCol, empty),
-  reverse(Move, Move).
-
-valid_slipper_move_right(_, _, Move):-
-  append([],[],Move).
-
-
-valid_slipper_move_left(Row, Col, Move) :-
-  % Move the slipper one cell to the left
-  NewCol is Col - 1,
-  valid_position(10, 10, Row, NewCol),
-  piece_at(Row, NewCol, empty),
-  valid_slipper_move_left(Row, NewCol, SubMoves),
-  append(SubMoves, [(Row, NewCol)], Move),
-  !.
-
-% Generate a list of valid moves for a slipper
-valid_slipper_move_left(Row, Col, Move):-
-  NewCol is Col - 1,
-  \+piece_at(Row, NewCol, empty),
-  reverse(Move, Move).
-
-valid_slipper_move_left(_, _, Move):-
-  append([],[],Move).
-
-
-
-
-% Generate the list of valid moves for a jumper starting from the given position
-valid_jumper_moves(Row, Col, Moves) :-
-  piece_at(Row, Col, red_jumper),
-  valid_jumper_move_right(Row, Col, MovesR),
-  valid_jumper_move_left(Row, Col, MovesL),
-  append(MovesL, MovesR, MovesT),
-  EnemyRow is Row + 1,
-  EmptyRow is Row + 2,
-  (piece_at(EnemyRow, Col, black_jumper);
-  piece_at(EnemyRow, Col, black_slipper)),
-  piece_at(EmptyRow, Col, empty),
-  append(MovesT,[(EmptyRow, Col)], Moves),
-  !.
-
-
-valid_jumper_moves(Row, Col, Moves) :-
-  piece_at(Row, Col, black_jumper),
-  valid_jumper_move_right(Row, Col, MovesR),
-  valid_jumper_move_left(Row, Col, MovesL),
-  append(MovesL, MovesR, MovesT),
-  EnemyRow is Row + 1,
-  EmptyRow is Row + 2,
-  (piece_at(EnemyRow, Col, red_jumper);
-  piece_at(EnemyRow, Col, red_slipper)),
-  piece_at(EmptyRow, Col, empty),
-  append(MovesT,[(EmptyRow, Col)], Moves)
-  ,!.
-
-
-valid_jumper_moves(Row, Col, Moves) :-
-  (piece_at(Row, Col, red_jumper);
-  piece_at(Row, Col, black_jumper)),
-  valid_jumper_move_right(Row, Col, MovesR),
-  valid_jumper_move_left(Row, Col, MovesL),
-  append(MovesL, MovesR, Moves).
-  
-
-valid_jumper_move_right(Row, Col, Move) :-
-  %Move the jumper one cell to the right
-  NewCol is Col + 1,
-  valid_position(10, 10, Row, NewCol),
-  piece_at(Row, NewCol, empty),
-  valid_jumper_move_right(Row, NewCol, SubMoves),
-  append([(Row, NewCol)], SubMoves, Move),
-  !.
-
-% Generate a list of valid moves for a jumper
-valid_jumper_move_right(Row, Col, Move):-
-  NewCol is Col + 1,
-  \+piece_at(Row, NewCol, empty),
-  reverse(Move, Move).
-
-valid_jumper_move_right(_, _, Move):-
-  append([],[],Move).
-
-
-valid_jumper_move_left(Row, Col, Move) :-
-  % Move the jumper one cell to the left
-  NewCol is Col - 1,
-  valid_position(10, 10, Row, NewCol),
-  piece_at(Row, NewCol, empty),
-  valid_jumper_move_left(Row, NewCol, SubMoves),
-  append(SubMoves, [(Row, NewCol)], Move),
-  !.
-
-% Generate a list of valid moves for a jumper
-valid_jumper_move_left(Row, Col, Move):-
-  NewCol is Col - 1,
-  valid_position(10, 10, Row, NewCol),
-  \+piece_at(Row, NewCol, empty),
-  reverse(Move, Move).
-
-valid_jumper_move_left(_, _, Move):-
-  append([],[],Move).
+  */
