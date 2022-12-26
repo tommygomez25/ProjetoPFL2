@@ -75,8 +75,8 @@ make_move(Board, Player,OldRow, OldCol, NewRow, NewCol, NewBoard) :-
   %piece_at(Row, Col, empty),
   %retract(piece_at(Row, Col, empty)),
   %assert(piece_at(Row, Col, Player)).
-  replace_in_2d_list(Board, OldRow, OldCol, empty, NewBoard1),
-  replace_in_2d_list(NewBoard1, NewRow, NewCol, Player, NewBoard).
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard1),
+  replace_board_value(NewBoard1, NewRow, NewCol, Player, NewBoard).
 /*
 % Predicate to check if the game is over
 game_over(Winner) :-

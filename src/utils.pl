@@ -71,23 +71,25 @@ jump(Row, Col, NewRow, NewCol) :-
   Piece \= empty.
 */
 
-replace_in_2d_list(List, Row, Col, NewValue, Result) :-
-    nth0(Row, List, OldRow, Prefix),
-    replace_in_list(Col, NewValue, OldRow, NewRow),
-    append(Prefix, [NewRow|Suffix], Result),
-    remove_from_list(Row, List, Suffix).
+replace_board_value_row([_|Tail],0,Value,[Value|Tail]).
 
-replace_in_list(0, X, [_|Xs], [X|Xs]).
-replace_in_list(N, X, [Y|Xs], [Y|Ys]) :-
-    N > 0,
-    N1 is N - 1,
-    replace_in_list(N1, X, Xs, Ys).
+replace_board_value_row([Head|Tail],Column,Value,[Head|NewTail]) :-
+    % write('\ndentro do replace_board_value_row\n'),
+    Column > 0,
+    Column1 is Column - 1,
+    replace_board_value_row(Tail,Column1,Value,NewTail).
 
-remove_from_list(0, [_|Xs], Xs).
-remove_from_list(N, [Y|Xs], [Y|Ys]) :-
-    N > 0,
-    N1 is N - 1,
-    remove_from_list(N1, Xs, Ys).
+replace_board_value([Head|Tail],0,Column,Value,[NewHead|Tail]) :-
+    % write('\ndentro do replace_board_value com row a 0\n'),
+    % write(Column),nl,
+    replace_board_value_row(Head,Column,Value,NewHead).
+
+replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
+    % write('\ndentro do replace_board_value\n'),
+    Row > 0,
+    Row1 is Row - 1,
+    replace_board_value(Tail,Row1,Column,Value,NewTail).
+
 
 
   
