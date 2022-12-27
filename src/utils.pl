@@ -9,13 +9,19 @@ valid_position(NumRows, NumCols, Row, Col) :-
   Col < NumCols.
 
 get_coordinates(Player,X, Y) :-
-    write('Enter the coordinates of the piece you wish to move (X Y): '),
-    % Read a string from the current input
-    read_string(current_input,"\n", "\r\t ",End,InputString),
-    % Split the string with " " as delimiter
-    split_string(InputString, " ", "", [XString, YString]),
-    % Convert the atoms to numbers
-    atom_number(XString, X), atom_number(YString, Y).
+  repeat,
+  format('Player ~w, enter the coordinates of the piece you wish to move (X Y): ',[Player]),
+  % Read a string from the current input
+  read_line_to_string(current_input, InputString),
+  % Split the string with " " as delimiter
+  split_string(InputString, " ", "", [XString, YString]),
+  % Try to convert the atoms to numbers
+  (   catch(atom_number(XString, X), _, fail)
+  ->  catch(atom_number(YString, Y), _, fail)
+  ;   format('Invalid input. Please enter two integers separated by a space.~n', []),
+      fail
+  ),
+  !.
 
 % Check if the given piece is valid
 valid_piece(Board,X,Y) :-
@@ -32,13 +38,13 @@ player(Board,Piece, red) :-
   piece_at(Board,_, _, Piece),
   Piece \= empty,
   Piece \= black_jumper,
-  Piece \= black_slipper.
+  Piece \= black.
 
 player(Board,Piece, black) :-
   piece_at(Board,_, _, Piece),
   Piece \= empty,
   Piece \= red_jumper,
-  Piece \= red_slipper.
+  Piece \= red.
 
 % Print the list of pieces
 print_pieces(Pieces) :-
