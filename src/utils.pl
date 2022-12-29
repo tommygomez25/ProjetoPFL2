@@ -83,3 +83,14 @@ replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
     replace_board_value(Tail,Row1,Column,Value,NewTail).
 
   
+read_line_to_string(Stream, String) :-
+  read_string(Stream, '\n', '\r', Sep, String0),
+  (   Sep \== -1
+  ->  String = String0
+  ;   String0 == ""
+  ->  String = end_of_file
+  ;   String = String0
+  ).
+
+
+  
