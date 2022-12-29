@@ -6,9 +6,9 @@ piece_at(Board,Row, Col, Piece) :-
   nth1(Col, RowList, Piece).
 
 valid_position(NumRows, NumCols, Row, Col) :-
-  Row >= 1,
+  Row >= 0,
   Row < NumRows,
-  Col >= 1,
+  Col >= 0,
   Col < NumCols.
 
 get_coordinates(Player,X, Y) :-
@@ -32,7 +32,7 @@ get_player_pieces(Board,Player,Pieces):-
 % Check if the given piece is valid
 valid_piece(Board,X,Y) :-
   % Check if the given coordinates are within the board borders
-  valid_position(11,11,X,Y),
+  valid_position(12,12,X,Y),
   % Check if the piece is on the board
   piece_at(Board,X, Y, Piece),
   % Check if the piece belongs to the current player

@@ -3,7 +3,7 @@
 
 game1(Board):-
 
-  game_over(Board);
+  %game_over(Board);
 
   % Print the playing board
   print_board(Board),
@@ -21,13 +21,13 @@ game1(Board):-
 
     % Get the valid moves for the current piece
     (player(Board, Piece, Player),
-     valid_jumper_moves(Board, X, Y, Moves1)
+     valid_jumper_moves(Board, Player,X, Y, Moves1)
      ;
-     valid_slipper_moves(Board, X, Y, Moves2)),
+     valid_slipper_moves(Board,Player, X, Y, Moves2)),
 
     % Display the available moves
     write('Valid moves: '),
-    (Moves1 \= [], print_moves(Moves1) ; Moves2 \= [], print_moves(Moves2)),
+    (Moves1 \= [], print_moves(Moves1) ; Moves2 \= [], print_moves(Moves2); list_empty(Moves1,true),list_empty(Moves2,true),write('You chose a piece that has no valid moves!'),nl,game1(Board)),
 
     % Choose a move
     (Moves1 \= [], choose_move(Player, Moves1, NewRow, NewCol)
@@ -96,6 +96,25 @@ choose_move(Player,Moves, Row, Col) :-
   atom_number(XString, Row), atom_number(YString, Col),
   % Check if the chosen move is valid
   (member((Row,Col),Moves) -> true ; format('~nChoose a valid move from the list.~n',[]), choose_move(Player,Moves,Row,Col)).
+
+
+% Predicate to make a move on the board
+make_move(Board, Player,OldRow, OldCol, NewRow, 11, NewBoard) :-
+  % Calculate the between row and col
+  %JumpRow is (OldRow + NewRow) // 2,
+  %JumpCol is (OldCol + 11) // 2,
+  % Check if it is from the other player
+  piece_at(Board, OldRow, OldCol, Piece),
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard).
+
+% Predicate to make a move on the board
+make_move(Board, Player,OldRow, OldCol, NewRow, 0, NewBoard) :-
+  % Calculate the between row and col
+  %JumpRow is (OldRow + NewRow) // 2,
+  %JumpCol is (OldCol + 11) // 2,
+  % Check if it is from the other player
+  piece_at(Board, OldRow, OldCol, Piece),
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard).
 
 % Predicate to make a move on the board
 make_move(Board, Player,OldRow, OldCol, NewRow, NewCol, NewBoard) :-
