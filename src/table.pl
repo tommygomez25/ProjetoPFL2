@@ -19,6 +19,16 @@ initBoard1([[black, red_jumper, empty, empty, empty, empty, empty, empty, empty,
                 [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
                 [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
                 [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]]).
+initBoard2([[empty, red_jumper, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+    [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
+    [red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, empty, empty],
+    [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
+    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
+    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]]).
 
 
 symbol(red_jumper, 'R').

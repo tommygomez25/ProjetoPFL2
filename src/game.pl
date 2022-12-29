@@ -52,6 +52,13 @@ game1(Board):-
 
 game_over(Board) :-
   current_player(Player),
+  other_player(Player,OtherPlayer),
+  find_all_moves(Board,OtherPlayer,AllMoves),
+  list_empty(AllMoves,true),
+  format('GAME OVER, WINNER: ~w',[Player]).
+
+game_over(Board) :-
+  current_player(Player),
   find_all_moves(Board,Player,AllMoves),
   list_empty(AllMoves,true),
   other_player(Player,OtherPlayer),

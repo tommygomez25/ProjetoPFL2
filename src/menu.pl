@@ -30,8 +30,11 @@ manageInput(49) :-
 
 manageInput(50) :-
     clear,
-    write('Starting Player vs CPU game in EASY MODE\n').
-    %...
+    write('Starting Player vs CPU game in EASY MODE\n'),
+    initBoard(Board),
+    retractall(current_player(_)),
+    assert(current_player(red)),
+    game2(Board).
 
 manageInput(51) :-
     clear,

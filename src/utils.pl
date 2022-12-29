@@ -26,6 +26,9 @@ get_coordinates(Player,X, Y) :-
   ),
   !.
 
+get_player_pieces(Board,Player,Pieces):-
+  setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces).
+
 % Check if the given piece is valid
 valid_piece(Board,X,Y) :-
   % Check if the given coordinates are within the board borders
