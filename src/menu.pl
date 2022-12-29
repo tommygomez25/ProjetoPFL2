@@ -22,7 +22,10 @@ manageInput(48) :-
 manageInput(49) :-
     clear,
     write('Starting Player vs Player game\n'),
-    game.
+    initBoard(Board),
+    retractall(current_player(_)),
+    assert(current_player(red)),
+    game1(Board).
     %...
 
 manageInput(50) :-

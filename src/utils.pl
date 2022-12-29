@@ -1,3 +1,6 @@
+list_empty([], true).
+list_empty([_|_], false).
+
 piece_at(Board,Row, Col, Piece) :-
   nth1(Row, Board, RowList),
   nth1(Col, RowList, Piece).
@@ -45,6 +48,11 @@ player(Board,Piece, black) :-
   Piece \= empty,
   Piece \= red_jumper,
   Piece \= red.
+
+% Helper predicate to check if a piece belongs to a player
+belongs_to_player(Board, Row, Col, Player) :-
+  piece_at(Board, Row, Col, Piece),
+  player(Board, Piece, Player).
 
 % Print the list of pieces
 print_pieces(Pieces) :-
