@@ -1,3 +1,6 @@
+list_empty([], true).
+list_empty([_|_], false).
+
 piece_at(Board,Row, Col, Piece) :-
   nth1(Row, Board, RowList),
   nth1(Col, RowList, Piece).
@@ -9,13 +12,17 @@ valid_position(NumRows, NumCols, Row, Col) :-
   Col < NumCols.
 
 get_coordinates(Player,X, Y) :-
-    write('Enter the coordinates of the piece you wish to move (X Y): '),
-    % Read a string from the current input
-    read_string(current_input,"\n", "\r\t ",End,InputString),
-    % Split the string with " " as delimiter
-    split_string(InputString, " ", "", [XString, YString]),
-    % Convert the atoms to numbers
-    atom_number(XString, X), atom_number(YString, Y).
+  repeat,
+  format('Player ~w, enter the coordinates of the piece you wish to move (X. Y.): ',[Player]),
+  %Read a string from the current input
+  %read_line_to_string(current_input, InputString),
+  %Split the string with " " as delimiter
+  %split_string(InputString, " ", "", [XString, YString]),
+  read(X), 
+  read(Y).
+
+get_player_pieces(Board,Player,Pieces):-
+  setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces).
 
 % Check if the given piece is valid
 valid_piece(Board,X,Y) :-
@@ -32,13 +39,18 @@ player(Board,Piece, red) :-
   piece_at(Board,_, _, Piece),
   Piece \= empty,
   Piece \= black_jumper,
-  Piece \= black_slipper.
+  Piece \= black.
 
 player(Board,Piece, black) :-
   piece_at(Board,_, _, Piece),
   Piece \= empty,
   Piece \= red_jumper,
-  Piece \= red_slipper.
+  Piece \= red.
+
+% Helper predicate to check if a piece belongs to a player
+belongs_to_player(Board, Row, Col, Player) :-
+  piece_at(Board, Row, Col, Piece),
+  player(Board, Piece, Player).
 
 % Print the list of pieces
 print_pieces(Pieces) :-
@@ -82,15 +94,6 @@ replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
     Row1 is Row - 1,
     replace_board_value(Tail,Row1,Column,Value,NewTail).
 
-  
-read_line_to_string(Stream, String) :-
-  read_string(Stream, '\n', '\r', Sep, String0),
-  (   Sep \== -1
-  ->  String = String0
-  ;   String0 == ""
-  ->  String = end_of_file
-  ;   String = String0
-  ).
 
 
   
