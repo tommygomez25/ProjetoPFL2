@@ -3,7 +3,7 @@
 
 game1(Board):-
 
-  %game_over(Board);
+  game_over(Board);
 
   % Print the playing board
   print_board(Board),
@@ -64,19 +64,20 @@ game_over(Board) :-
   other_player(Player,OtherPlayer),
   format('GAME OVER, WINNER: ~w',[OtherPlayer]).
 
-% Find all the possible moves for all the pieces in the board of the given player
 find_all_moves(Board, Player, AllMoves) :-
-  setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces),
-  get_all_moves(Board,Pieces,AllMoves),!.
+  % Only call get_all_moves if there are available Pieces for the current Player
+  (setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces)
+  -> get_all_moves(Board, Pieces, AllMoves),!
+  ; AllMoves = []).
 
 
 get_all_moves(_, [], []).
 get_all_moves(Board, [(Row, Col)|Coords], Moves) :-
   % Get the valid moves for the current piece
   (player(Board, Piece, Player),
-   valid_jumper_moves(Board, Row, Col, Moves1)
+   valid_jumper_moves(Board, Player,Row, Col, Moves1)
    ;
-   valid_slipper_moves(Board, Row, Col, Moves2)),
+   valid_slipper_moves(Board, Player,Row, Col, Moves2)),
   % Add the valid moves for the current piece to the list of moves
   append(Moves1, Moves2, PieceMoves),
   % Recursively find the valid moves for the remaining pieces
@@ -105,7 +106,7 @@ make_move(Board, Player,OldRow, OldCol, NewRow, 11, NewBoard) :-
   %JumpCol is (OldCol + 11) // 2,
   % Check if it is from the other player
   piece_at(Board, OldRow, OldCol, Piece),
-  replace_board_value(Board, OldRow, OldCol, empty, NewBoard).
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard),!.
 
 % Predicate to make a move on the board
 make_move(Board, Player,OldRow, OldCol, NewRow, 0, NewBoard) :-
@@ -114,7 +115,7 @@ make_move(Board, Player,OldRow, OldCol, NewRow, 0, NewBoard) :-
   %JumpCol is (OldCol + 11) // 2,
   % Check if it is from the other player
   piece_at(Board, OldRow, OldCol, Piece),
-  replace_board_value(Board, OldRow, OldCol, empty, NewBoard).
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard),!.
 
 % Predicate to make a move on the board
 make_move(Board, Player,OldRow, OldCol, NewRow, NewCol, NewBoard) :-
@@ -129,13 +130,13 @@ make_move(Board, Player,OldRow, OldCol, NewRow, NewCol, NewBoard) :-
    piece_at(Board, OldRow, OldCol, Piece),
    replace_board_value(Board, OldRow, OldCol, empty, NBoard),
    replace_board_value(NBoard, NewRow, NewCol, Piece, NBoard2),
-   replace_board_value(NBoard2, JumpRow, JumpCol, SlipperColor, NewBoard)
+   replace_board_value(NBoard2, JumpRow, JumpCol, SlipperColor, NewBoard),!
    ;
    % If there is no jumper between the old position and the new position,
    % just make the move without removing any piece
    piece_at(Board, OldRow, OldCol, Piece),
    replace_board_value(Board, OldRow, OldCol, empty, NBoard),
-   replace_board_value(NBoard, NewRow, NewCol, Piece, NewBoard)).
+   replace_board_value(NBoard, NewRow, NewCol, Piece, NewBoard)),!.
 
 
 % Predicate to switch to the other player

@@ -79,6 +79,8 @@ print_moves([(X,Y)|T]) :-
   write(' ('), write(X), write(','),write(Y),write(') '),
   print_moves(T).
 
+copy_board([],[]).
+copy_board([H|T],[H|Z]):- copy_board(T,Z).
 
 replace_board_value_row([_|Tail],1,Value,[Value|Tail]).
 
