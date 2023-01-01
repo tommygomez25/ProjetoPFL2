@@ -2,8 +2,9 @@
 :- dynamic(current_player/1).
 
 game1(Board):-
+  game_over(Board).
 
-  game_over(Board);
+game1(Board):-
 
   % Print the playing board
   print_board(Board),
@@ -21,13 +22,13 @@ game1(Board):-
 
     % Get the valid moves for the current piece
     (player(Board, Piece, Player),
-     valid_jumper_moves(Board, X, Y, Moves1)
+     valid_jumper_moves(Board, Player,X, Y, Moves1)
      ;
-     valid_slipper_moves(Board, X, Y, Moves2)),
+     valid_slipper_moves(Board,Player, X, Y, Moves2)),
 
     % Display the available moves
     write('Valid moves: '),
-    (Moves1 \= [], print_moves(Moves1) ; Moves2 \= [], print_moves(Moves2)),
+    (Moves1 \= [], print_moves(Moves1) ; Moves2 \= [], print_moves(Moves2); list_empty(Moves1,true),list_empty(Moves2,true),write('You chose a piece that has no valid moves!'),nl,game1(Board)),
 
     % Choose a move
     (Moves1 \= [], choose_move(Player, Moves1, NewRow, NewCol)
@@ -50,39 +51,40 @@ game1(Board):-
     format('~nChoose a piece that belongs to you.~n', []),
     game1(Board)).
 
+
+current_player(red).
+
 game_over(Board) :-
   current_player(Player),
   other_player(Player,OtherPlayer),
   find_all_moves(Board,OtherPlayer,AllMoves),
   list_empty(AllMoves,true),
-  format('GAME OVER, WINNER: ~w',[Player]).
+  format('GAME OVER, WINNER: ~w',[Player]),!.
 
 game_over(Board) :-
   current_player(Player),
   find_all_moves(Board,Player,AllMoves),
   list_empty(AllMoves,true),
   other_player(Player,OtherPlayer),
-  format('GAME OVER, WINNER: ~w',[OtherPlayer]).
+  format('GAME OVER, WINNER: ~w',[OtherPlayer]),!.
 
 % Find all the possible moves for all the pieces in the board of the given player
 find_all_moves(Board, Player, AllMoves) :-
-  setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces),
-  get_all_moves(Board,Pieces,AllMoves),!.
+  setof((Row, Col), (member(Row, [1,2,3]), member(Col, [1,2]), belongs_to_player(Board, Row, Col, Player)), Pieces),
+  get_all_moves(Board,Player, Pieces,AllMoves),!.
 
 
-get_all_moves(_, [], []).
-get_all_moves(Board, [(Row, Col)|Coords], Moves) :-
+get_all_moves(_, _,[], []).
+get_all_moves(Board, Player, [(Row, Col)|Coords], Moves) :-
   % Get the valid moves for the current piece
-  (player(Board, Piece, Player),
-   valid_jumper_moves(Board, Row, Col, Moves1)
+  (player(Board, _, _),
+   valid_jumper_moves(Board, Player, Row, Col, PieceMoves)
    ;
-   valid_slipper_moves(Board, Row, Col, Moves2)),
-  % Add the valid moves for the current piece to the list of moves
-  append(Moves1, Moves2, PieceMoves),
+   valid_slipper_moves(Board, Player, Row, Col, PieceMoves)),
   % Recursively find the valid moves for the remaining pieces
-  get_all_moves(Board, Coords, RemainingMoves),
+  get_all_moves(Board, Player, Coords, RemainingMoves),
   % Add the moves for the remaining pieces to the list of moves
-  append(PieceMoves, RemainingMoves, Moves).
+  append(PieceMoves, RemainingMoves, Moves),!.
 
 % Predicate to choose a move from the list of valid moves
 choose_move(Player,Moves, Row, Col) :-
@@ -97,6 +99,25 @@ choose_move(Player,Moves, Row, Col) :-
   %atom_number(XString, Row), atom_number(YString, Col),
   % Check if the chosen move is valid
   (member((Row,Col),Moves) -> true ; format('~nChoose a valid move from the list.~n',[]), choose_move(Player,Moves,Row,Col)).
+
+
+% Predicate to make a move on the board
+make_move(Board, Player,OldRow, OldCol, NewRow, 11, NewBoard) :-
+  % Calculate the between row and col
+  %JumpRow is (OldRow + NewRow) // 2,
+  %JumpCol is (OldCol + 11) // 2,
+  % Check if it is from the other player
+  piece_at(Board, OldRow, OldCol, Piece),
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard).
+
+% Predicate to make a move on the board
+make_move(Board, Player,OldRow, OldCol, NewRow, 0, NewBoard) :-
+  % Calculate the between row and col
+  %JumpRow is (OldRow + NewRow) // 2,
+  %JumpCol is (OldCol + 11) // 2,
+  % Check if it is from the other player
+  piece_at(Board, OldRow, OldCol, Piece),
+  replace_board_value(Board, OldRow, OldCol, empty, NewBoard).
 
 % Predicate to make a move on the board
 make_move(Board, Player,OldRow, OldCol, NewRow, NewCol, NewBoard) :-

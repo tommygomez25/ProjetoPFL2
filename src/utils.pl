@@ -6,9 +6,9 @@ piece_at(Board,Row, Col, Piece) :-
   nth1(Col, RowList, Piece).
 
 valid_position(NumRows, NumCols, Row, Col) :-
-  Row >= 1,
+  Row >= 0,
   Row < NumRows,
-  Col >= 1,
+  Col >= 0,
   Col < NumCols.
 
 get_coordinates(Player,X, Y) :-
@@ -27,7 +27,7 @@ get_player_pieces(Board,Player,Pieces):-
 % Check if the given piece is valid
 valid_piece(Board,X,Y) :-
   % Check if the given coordinates are within the board borders
-  valid_position(11,11,X,Y),
+  valid_position(12,12,X,Y),
   % Check if the piece is on the board
   piece_at(Board,X, Y, Piece),
   % Check if the piece belongs to the current player
@@ -96,4 +96,42 @@ replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
 
 
 
-  
+
+choose_cpu_hard_move(Moves, OldRow, OldCol, NewRow, NewCol):-
+  filterMoves(Moves,FilteredMoves),
+  random_member((_,[(OldRow,OldCol),(NewRow, NewCol)]), FilteredMoves).
+
+first_weight([(Weight, _)|_], Weight).
+
+filterMoves(List, FilteredList):-
+  quicksort(List,SortedList),
+  first_weight(SortedList,MaxWeight),
+  remove_non_max_weights(SortedList,MaxWeight,[],FilteredList).
+
+
+quicksort([], []).
+quicksort([(Weight, Value)|Tail], SortedList) :-
+    split(Tail, (Weight, Value), Left, Right),
+    quicksort(Left, SortedLeft),
+    quicksort(Right, SortedRight),
+    append(SortedRight, [(Weight, Value)|SortedLeft], SortedList).
+
+split([], _, [], []).
+split([(Weight, Value)|Tail], (PivotWeight, PivotValue), [(Weight, Value)|Left], Right) :-
+    Weight @=< PivotWeight,
+    split(Tail, (PivotWeight, PivotValue), Left, Right).
+split([(Weight, Value)|Tail], (PivotWeight, PivotValue), Left, [(Weight, Value)|Right]) :-
+    Weight @> PivotWeight,
+    split(Tail, (PivotWeight, PivotValue), Left, Right).
+
+
+remove_non_max_weights([], _, Result, Result).
+remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
+  Weight =:= MaxWeight,
+  remove_non_max_weights(Tail,MaxWeight,[(Weight,Value)|Acc],Result).
+
+remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
+  Weight @< MaxWeight,
+  remove_non_max_weights(Tail,MaxWeight,Acc,Result).
+
+

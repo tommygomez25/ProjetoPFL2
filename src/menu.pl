@@ -22,7 +22,7 @@ manageInput(48) :-
 manageInput(49) :-
     clear,
     write('Starting Player vs Player game\n'),
-    initBoard(Board),
+    initBoard2(Board),
     retractall(current_player(_)),
     assert(current_player(red)),
     game1(Board).
@@ -38,7 +38,11 @@ manageInput(50) :-
 
 manageInput(51) :-
     clear,
-    write('Starting Player vs CPU game in NORMAL MODE\n').
+    write('Starting Player vs CPU game in NORMAL MODE\n'),
+    initBoard(Board),
+    retractall(current_player(_)),
+    assert(current_player(red)),
+    game3(Board).
     %...
 
 manageInput(52) :-
