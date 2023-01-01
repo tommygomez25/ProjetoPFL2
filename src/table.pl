@@ -66,19 +66,18 @@ print_header([Head|_]):-
     write('   '),
     print_letters(0, S1).
 
-print_board(Board):-
+display_game(Board):-
     nl,
     print_header(Board),nl,
     nl,
-    print_board1(Board, 1).
+    display_game1(Board, 1).
 
-print_board1([[First|Rest]|[]], Line):-
+display_game1([[First|Rest]|[]], Line):-
     Line >= 10,
     write(Line), write(' '),
     symbol(First, S),
     format('  ~s', [S]),
     print_line(Rest),
-    Line1 is Line + 1,
     nl
     ;
     Line < 10,
@@ -86,10 +85,9 @@ print_board1([[First|Rest]|[]], Line):-
     symbol(First, S),
     format('  ~s', [S]),
     print_line(Rest),
-    Line1 is Line + 1,
     nl.
 
-print_board1([[First|Rest]|Tail], Line):-
+display_game1([[First|Rest]|Tail], Line):-
     Line >= 10,
     write(Line), write(' '),
     symbol(First, S),
@@ -99,7 +97,7 @@ print_board1([[First|Rest]|Tail], Line):-
     write('     |  |  |  |  |  |  |  |  |  |'),
     Line1 is Line + 1,
     nl,
-    print_board1(Tail, Line1)
+    display_game1(Tail, Line1)
     ;
     Line < 10,
     write(Line), write('  '),
@@ -110,7 +108,7 @@ print_board1([[First|Rest]|Tail], Line):-
     write('     |  |  |  |  |  |  |  |  |  |'),
     Line1 is Line + 1,
     nl,
-    print_board1(Tail, Line1).
+    display_game1(Tail, Line1).
 
 print_line([]).
 print_line([Head|Tail]):-

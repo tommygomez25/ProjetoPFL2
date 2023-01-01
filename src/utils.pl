@@ -66,14 +66,6 @@ print_pieces(Pieces) :-
 print_piece(Piece) :-
   format('~w~n',[Piece]).
 
-filter([], _, []). % base case: if the list is empty, the filtered list is also empty
-filter([X|Xs], Y, [X|Zs]) :- % recursive case: if X is equal to Y,
-  X = Y,
-  filter(Xs, Y, Zs).
-filter([X|Xs], Y, Zs) :- % recursive case: if X is not equal to Y,
-  X \= Y,
-  filter(Xs, Y, Zs).
-
 print_moves([]).
 print_moves([(X,Y)|T]) :-
   write(' ('), write(X), write(','),write(Y),write(') '),

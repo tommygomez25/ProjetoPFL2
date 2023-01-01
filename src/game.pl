@@ -6,7 +6,7 @@ game1(Board):-
   game_over(Board);
 
   % Print the playing board
-  print_board(Board),
+  display_game(Board),
 
   % Get the current player
   current_player(Player),
@@ -53,37 +53,17 @@ game1(Board):-
 game_over(Board) :-
   current_player(Player),
   other_player(Player,OtherPlayer),
-  find_all_moves(Board,OtherPlayer,AllMoves),
+  valid_moves(Board,OtherPlayer,AllMoves),
   list_empty(AllMoves,true),
   format('GAME OVER, WINNER: ~w',[Player]).
 
 game_over(Board) :-
   current_player(Player),
-  find_all_moves(Board,Player,AllMoves),
+  valid_moves(Board,Player,AllMoves),
   list_empty(AllMoves,true),
   other_player(Player,OtherPlayer),
   format('GAME OVER, WINNER: ~w',[OtherPlayer]).
 
-find_all_moves(Board, Player, AllMoves) :-
-  % Only call get_all_moves if there are available Pieces for the current Player
-  (setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces)
-  -> get_all_moves(Board, Pieces, AllMoves),!
-  ; AllMoves = []).
-
-
-get_all_moves(_, [], []).
-get_all_moves(Board, [(Row, Col)|Coords], Moves) :-
-  % Get the valid moves for the current piece
-  (player(Board, Piece, Player),
-   valid_jumper_moves(Board, Player,Row, Col, Moves1)
-   ;
-   valid_slipper_moves(Board, Player,Row, Col, Moves2)),
-  % Add the valid moves for the current piece to the list of moves
-  append(Moves1, Moves2, PieceMoves),
-  % Recursively find the valid moves for the remaining pieces
-  get_all_moves(Board, Coords, RemainingMoves),
-  % Add the moves for the remaining pieces to the list of moves
-  append(PieceMoves, RemainingMoves, Moves).
 
 % Predicate to choose a move from the list of valid moves
 choose_move(Player,Moves, Row, Col) :-
