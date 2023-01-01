@@ -1,3 +1,23 @@
+valid_moves(Board, Player, AllMoves) :-
+    % Only call get_all_moves if there are available Pieces for the current Player
+    (setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces)
+    -> get_all_moves(Board, Pieces, AllMoves),!
+    ; AllMoves = []).
+  
+get_all_moves(_, [], []).
+get_all_moves(Board, [(Row, Col)|Coords], Moves) :-
+    % Get the valid moves for the current piece
+    (player(Board, Piece, Player),
+     valid_jumper_moves(Board, Player,Row, Col, Moves1)
+     ;
+     valid_slipper_moves(Board, Player,Row, Col, Moves2)),
+    % Add the valid moves for the current piece to the list of moves
+    append(Moves1, Moves2, PieceMoves),
+    % Recursively find the valid moves for the remaining pieces
+    get_all_moves(Board, Coords, RemainingMoves),
+    % Add the moves for the remaining pieces to the list of moves
+    append(PieceMoves, RemainingMoves, Moves).    
+
 % Generate the list of valid moves for a slipper starting from the given position
 valid_slipper_moves(Board,red,Row, Col, Moves) :-
     valid_slipper_move_right(Board,Row, Col, Moves),!.

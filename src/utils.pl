@@ -61,19 +61,13 @@ print_pieces(Pieces) :-
 print_piece(Piece) :-
   format('~w~n',[Piece]).
 
-filter([], _, []). % base case: if the list is empty, the filtered list is also empty
-filter([X|Xs], Y, [X|Zs]) :- % recursive case: if X is equal to Y,
-  X = Y,
-  filter(Xs, Y, Zs).
-filter([X|Xs], Y, Zs) :- % recursive case: if X is not equal to Y,
-  X \= Y,
-  filter(Xs, Y, Zs).
-
 print_moves([]).
 print_moves([(X,Y)|T]) :-
   write(' ('), write(X), write(','),write(Y),write(') '),
   print_moves(T).
 
+copy_board([],[]).
+copy_board([H|T],[H|Z]):- copy_board(T,Z).
 
 replace_board_value_row([_|Tail],1,Value,[Value|Tail]).
 
@@ -95,43 +89,5 @@ replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
     replace_board_value(Tail,Row1,Column,Value,NewTail).
 
 
-
-
-choose_cpu_hard_move(Moves, OldRow, OldCol, NewRow, NewCol):-
-  filterMoves(Moves,FilteredMoves),
-  random_member((_,[(OldRow,OldCol),(NewRow, NewCol)]), FilteredMoves).
-
-first_weight([(Weight, _)|_], Weight).
-
-filterMoves(List, FilteredList):-
-  quicksort(List,SortedList),
-  first_weight(SortedList,MaxWeight),
-  remove_non_max_weights(SortedList,MaxWeight,[],FilteredList).
-
-
-quicksort([], []).
-quicksort([(Weight, Value)|Tail], SortedList) :-
-    split(Tail, (Weight, Value), Left, Right),
-    quicksort(Left, SortedLeft),
-    quicksort(Right, SortedRight),
-    append(SortedRight, [(Weight, Value)|SortedLeft], SortedList).
-
-split([], _, [], []).
-split([(Weight, Value)|Tail], (PivotWeight, PivotValue), [(Weight, Value)|Left], Right) :-
-    Weight @=< PivotWeight,
-    split(Tail, (PivotWeight, PivotValue), Left, Right).
-split([(Weight, Value)|Tail], (PivotWeight, PivotValue), Left, [(Weight, Value)|Right]) :-
-    Weight @> PivotWeight,
-    split(Tail, (PivotWeight, PivotValue), Left, Right).
-
-
-remove_non_max_weights([], _, Result, Result).
-remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
-  Weight =:= MaxWeight,
-  remove_non_max_weights(Tail,MaxWeight,[(Weight,Value)|Acc],Result).
-
-remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
-  Weight @< MaxWeight,
-  remove_non_max_weights(Tail,MaxWeight,Acc,Result).
 
 
