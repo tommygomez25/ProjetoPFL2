@@ -28,6 +28,6 @@
 ![Intermediate State](./intermediatestate.png)
 
 > #### Final state
-> ``` [[w-e,b-w,w-e,b-e,w-e,b-e,w-e,b-b,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-w,b-w,w-e,b-e,w-e,b-e,w-b,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-b,w-e,b-e,w-e,b-b,w-e,b-b], [w-w,b-e,w-e,b-b,w-e,b-e,w-e,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-e,b-e,w-e,b-e,w-e,b-b,w-e,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-e,b-b,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-b]],w ``` 
+> ``` [[empty, empty, empty, empty, empty, empty, empty, empty, red_jumper, empty],[empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],[black, empty, empty, empty,empty, empty, empty, empty, empty,empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]] ``` 
 
 ![Final State](./finalstate.png)
