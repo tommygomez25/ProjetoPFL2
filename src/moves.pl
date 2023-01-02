@@ -1,20 +1,28 @@
+/*
+valid_moves(+Board,+Player,-AllMoves)
+Gathers all the moves of each piece in the list AllMoves
+*/
 valid_moves(Board, Player, AllMoves) :-
-    % Only call get_all_moves if there are available Pieces for the current Player
+    % Only call get_all_moves if there are available Pieces for the current Player because setof returns false if Pieces is empty
     (setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces)
     -> get_all_moves(Board, Player, Pieces, AllMoves),!
     ; AllMoves = []).
-  
+
+/*
+get_all_moves(+Board,+Player,+Pieces,-Moves)
+Returns all moves for each piece of the list Pieces
+*/
 get_all_moves(_, _, [], []).
 get_all_moves(Board, Player, [(Row, Col)|Coords], Moves) :-
-    % Get the valid moves for the current piece
+
     (valid_jumper_moves(Board, Player,Row, Col, Moves1)
      ;
      valid_slipper_moves(Board, Player,Row, Col, Moves2)),
-    % Add the valid moves for the current piece to the list of moves
+
     append(Moves1, Moves2, PieceMoves),
-    % Recursively find the valid moves for the remaining pieces
+
     get_all_moves(Board, Player, Coords, RemainingMoves),
-    % Add the moves for the remaining pieces to the list of moves
+
     append(PieceMoves, RemainingMoves, Moves),!.    
 
 
@@ -78,24 +86,7 @@ valid_slipper_move_left(Board,Row, Col, Move) :-
   
   valid_slipper_move_left(_,_, _, Move):-
     append([],[],Move). 
- 
-valid_slipper_move_right(_,Row, 10, Move) :-
-        %Move the slipper one cell to the right
-        valid_position(12, 12, Row, 11),
-        append([(Row,11 )], [], Move),
-        !.
-    
-valid_slipper_move_right(Board,Row, Col, Move) :-
-    %Move the slipper one cell to the right
-    NewCol is Col + 1,
-    valid_position(12, 12, Row, NewCol),
-    piece_at(Board,Row, NewCol, empty),
-    valid_slipper_move_right(Board,Row, NewCol, SubMoves),
-    append([(Row, NewCol)], SubMoves, Move),
-    !.
 
-valid_slipper_move_right(_,_, _, Move):-
-    append([],[],Move).
 
 % Generate the list of valid moves for a jumper starting from the given position
 valid_jumper_moves(Board,red,Row, Col, Moves) :-

@@ -9,46 +9,11 @@ initBoard([[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, 
              [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
              [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]).
 
-initBoard1([[black, red_jumper, empty, empty, empty, empty, empty, empty, empty, empty],
-                [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
-                [red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, empty, empty],
-                [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-                [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-                [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-                [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-                [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-                [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-                [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]]).
-initBoard2([[empty, red_jumper, empty, empty, empty, empty, empty, empty, empty, black_jumper],
-    [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
-    [red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-    [empty, empty, empty, empty, black, empty, empty, empty, empty, empty]]).
-
-initBoard3(
-    [[empty, empty, red_jumper, empty, empty, empty, empty, empty, empty, black_jumper],
-    [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-    [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-    [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]]
-    ).
-
-
 symbol(red_jumper, 'R').
 symbol(black_jumper,'B').
 symbol(empty, '+').
-symbol(red,'D').
-symbol(black,'K').
+symbol(red,'r').
+symbol(black,'b').
 
 print_letters(Size, Size).
 
