@@ -78,7 +78,7 @@ choose_move(Player,Moves, Row, Col) :-
   read(Row), 
   write('Column [a-j]: '),
   read(Y),
-  letter_to_number(Y,Col).
+  letter_to_number(Y,Col),
 
   (member((Row,Col),Moves) -> true ; format('~nChoose a valid move from the list.~n',[]), choose_move(Player,Moves,Row,Col)).
 

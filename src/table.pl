@@ -1,13 +1,13 @@
-initBoard([[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],
-             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty,empty, empty, empty, empty, empty,black_jumper],
-             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
-             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
-             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]).
+initBoard([[empty, empty, empty, empty, empty, empty, empty, empty, red_jumper, empty],
+             [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [black, empty, empty, empty,empty, empty, empty, empty, empty,empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]]).
 
 initBoard1([[black, red_jumper, empty, empty, empty, empty, empty, empty, empty, empty],
                 [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
