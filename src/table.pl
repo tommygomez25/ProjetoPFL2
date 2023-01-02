@@ -1,8 +1,8 @@
 initBoard([[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, black_jumper,empty,empty, empty, empty, red_jumper, black_jumper],
-             [red_jumper, empty, empty, red_jumper, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
              [empty, empty, empty, empty,empty, empty, empty, empty, empty,black_jumper],
-             [red_jumper, empty, empty, black_jumper, empty, empty, empty, empty, empty, empty],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
              [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
              [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
              [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
@@ -31,8 +31,8 @@ initBoard2([[empty, red_jumper, empty, empty, empty, empty, empty, empty, empty,
     [empty, empty, empty, empty, black, empty, empty, empty, empty, empty]]).
 
 initBoard3(
-    [[empty, empty, red_jumper, empty, empty, empty, empty, empty, empty, empty],
-    [empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],
+    [[empty, empty, red_jumper, empty, empty, empty, empty, empty, empty, black_jumper],
+    [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
     [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
     [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
     [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
@@ -55,7 +55,7 @@ print_letters(Size, Size).
 print_letters(Index, Size):-
     Size >= Index,
     write('  '),
-    Letter is Index + 65,
+    Letter is Index + 97,
     put_code(Letter),
     Index1 is Index + 1,
     print_letters(Index1, Size).

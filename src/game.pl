@@ -3,7 +3,7 @@
 
 game1(Board):-
 
-  game_over(Board);
+  game_over(Board),!;
 
   % Print the playing board
   display_game(Board),
@@ -13,6 +13,7 @@ game1(Board):-
 
   % Prompt the user to choose a piece
   get_coordinates(Player, X, Y),
+  format('row: ~w col: ~w ~n',[X,Y]),
 
   % Check if the chosen piece belongs to the current player
   (valid_piece(Board, X, Y) ->
@@ -70,35 +71,28 @@ game_over(Board) :-
 
 % Predicate to choose a move from the list of valid moves
 choose_move(Player,Moves, Row, Col) :-
-  % Prompt the player to choose a move
+
   format('~nPlayer ~w, choose a move (X Y):~n', [Player]),
-  % Read the chosen move from the player
-  %read_line_to_string(current_input, InputString),
-  % Split the string with " " as delimiter
-  %split_string(InputString, " ", "", [XString, YString]),
-  % Convert the atoms to numbers
-  read(Row), read(Col),
-  %atom_number(XString, Row), atom_number(YString, Col),
-  % Check if the chosen move is valid
+
+  write('Row [1-10]: '),
+  read(Row), 
+  write('Column [a-j]: '),
+  read(Y),
+  letter_to_number(Y,Col).
+
   (member((Row,Col),Moves) -> true ; format('~nChoose a valid move from the list.~n',[]), choose_move(Player,Moves,Row,Col)).
 
 
 % Predicate to make a move on the board
-make_move(Board, Player,OldRow, OldCol, NewRow, 11, NewBoard) :-
-  % Calculate the between row and col
-  %JumpRow is (OldRow + NewRow) // 2,
-  %JumpCol is (OldCol + 11) // 2,
-  % Check if it is from the other player
-  piece_at(Board, OldRow, OldCol, Piece),
+make_move(Board, _,OldRow, OldCol, _, 11, NewBoard) :-
+
+  piece_at(Board, OldRow, OldCol, _),
   replace_board_value(Board, OldRow, OldCol, empty, NewBoard),!.
 
 % Predicate to make a move on the board
-make_move(Board, Player,OldRow, OldCol, NewRow, 0, NewBoard) :-
-  % Calculate the between row and col
-  %JumpRow is (OldRow + NewRow) // 2,
-  %JumpCol is (OldCol + 11) // 2,
-  % Check if it is from the other player
-  piece_at(Board, OldRow, OldCol, Piece),
+make_move(Board, _,OldRow, OldCol, _, 0, NewBoard) :-
+
+  piece_at(Board, OldRow, OldCol, _),
   replace_board_value(Board, OldRow, OldCol, empty, NewBoard),!.
 
 % Predicate to make a move on the board

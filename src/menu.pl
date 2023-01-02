@@ -47,7 +47,11 @@ manageInput(51) :-
 
 manageInput(52) :-
     clear,
-    write('Starting CPU vs CPU game\n').
+    write('Starting CPU vs CPU game\n'),
+    initBoard(Board),
+    retractall(current_player(_)),
+    assert(current_player(red)),
+    game4(Board).
     %...
 
 displayMenu :-

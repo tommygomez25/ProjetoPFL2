@@ -11,15 +11,31 @@ valid_position(NumRows, NumCols, Row, Col) :-
   Col >= 0,
   Col < NumCols.
 
+letter_to_number(z,0).
+letter_to_number(a,1).
+letter_to_number(b,2).
+letter_to_number(c,3).
+letter_to_number(d,4).
+letter_to_number(e,5).
+letter_to_number(f,6).
+letter_to_number(g,7).
+letter_to_number(h,8).
+letter_to_number(i,9).
+letter_to_number(j,10).
+letter_to_number(z,11).
+
 get_coordinates(Player,X, Y) :-
   repeat,
-  format('Player ~w, enter the coordinates of the piece you wish to move (X. Y.): ',[Player]),
+  format('Player ~w, enter the coordinates of the piece you wish to move: ',[Player]),
   %Read a string from the current input
   %read_line_to_string(current_input, InputString),
   %Split the string with " " as delimiter
   %split_string(InputString, " ", "", [XString, YString]),
+  write('Row [1-10]: '),
   read(X), 
-  read(Y).
+  write('Column [a-j]: '),
+  read(Col),
+  letter_to_number(Col,Y).
 
 get_player_pieces(Board,Player,Pieces):-
   setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player)), Pieces).
@@ -62,7 +78,8 @@ print_piece(Piece) :-
   format('~w~n',[Piece]).
 
 print_moves([]).
-print_moves([(X,Y)|T]) :-
+print_moves([(X,Col)|T]) :-
+letter_to_number(Y,Col),
   write(' ('), write(X), write(','),write(Y),write(') '),
   print_moves(T).
 
@@ -88,6 +105,38 @@ replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
     Row1 is Row - 1,
     replace_board_value(Tail,Row1,Column,Value,NewTail).
 
+quicksort([], []).
+quicksort([(Weight, Value)|Tail], SortedList) :-
+    split(Tail, (Weight, Value), Left, Right),
+    quicksort(Left, SortedLeft),
+    quicksort(Right, SortedRight),
+    append(SortedRight, [(Weight, Value)|SortedLeft], SortedList).
+
+split([], _, [], []).
+split([(Weight, Value)|Tail], (PivotWeight, PivotValue), [(Weight, Value)|Left], Right) :-
+    Weight @=< PivotWeight,
+    split(Tail, (PivotWeight, PivotValue), Left, Right).
+split([(Weight, Value)|Tail], (PivotWeight, PivotValue), Left, [(Weight, Value)|Right]) :-
+    Weight @> PivotWeight,
+    split(Tail, (PivotWeight, PivotValue), Left, Right).
 
 
+remove_non_max_weights([], _, Result, Result).
+remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
+    Weight =:= MaxWeight,
+    remove_non_max_weights(Tail,MaxWeight,[(Weight,Value)|Acc],Result).
 
+remove_non_max_weights([(Weight, _)|Tail], MaxWeight, Acc, Result) :-
+    Weight @< MaxWeight,
+    remove_non_max_weights(Tail,MaxWeight,Acc,Result).
+
+
+count_jumpers(Board,Player,Count):-
+  setof((Row, Col), (member(Row, [1,2,3,4,5,6,7,8,9,10]), member(Col, [1,2,3,4,5,6,7,8,9,10]), belongs_to_player(Board, Row, Col, Player), piece_at(Board,Row,Col,Piece), is_jumper(Piece)), Pieces),
+  length(Pieces, Count),!.
+
+count_jumpers(_, _, 0).
+
+
+is_jumper(red_jumper).
+is_jumper(black_jumper).

@@ -1,7 +1,6 @@
-
 game2(Board):-
 
-    game_over(Board);
+
 
     % Print the playing board
     display_game(Board),
@@ -57,8 +56,9 @@ game2(Board):-
 %-------------------------------------------------------------------------------------------------------%
 
 game3(Board):-
+    game_over(Board),!.
 
-    game_over(Board);
+game3(Board):-
 
     % Print the playing board
     display_game(Board),
@@ -72,22 +72,16 @@ game3(Board):-
     % Check if the chosen piece belongs to the current player
     (valid_piece(Board, X, Y) ->
         % If the piece belongs to the current player, continue with the game loop
-        piece_at(Board, X, Y, Piece),
+        piece_at(Board, X, Y, _),
 
-        % Get the valid moves for the current piece
-        (player(Board, Piece, Player),
-        valid_jumper_moves(Board, Player,X, Y, Moves1)
-        ;
-        valid_slipper_moves(Board,Player, X, Y, Moves2)),
+        valid_piece_moves(Board, Player, X, Y,Moves),
 
         % Display the available moves
         write('Valid moves: '),
-        (Moves1 \= [], print_moves(Moves1) ; Moves2 \= [], print_moves(Moves2); list_empty(Moves1,true),list_empty(Moves2,true),write('You chose a piece that has no valid moves!'),nl,game3(Board)),
+        (Moves \= [], print_moves(Moves) ;  list_empty(Moves,true),write('You chose a piece that has no valid moves!'),nl,game3(Board)),
 
         % Choose a move
-        (Moves1 \= [], choose_move(Player, Moves1, NewRow, NewCol)
-        ;
-        Moves2 \= [], choose_move(Player,Moves2, NewRow, NewCol)),
+        choose_move(Player, Moves, NewRow, NewCol),
 
         % Make the move
         make_move(Board, Player, X, Y, NewRow, NewCol, Board2),
@@ -98,9 +92,8 @@ game3(Board):-
         assert(current_player(OtherPlayer)),
 
         make_hard_cpu_move(Board2,OtherPlayer,Board3),
-        
-        % Switch back to the other player
-        other_player(OtherPlayer, Player),
+
+
         retractall(current_player(_)),
         assert(current_player(Player)),
 
@@ -118,8 +111,9 @@ make_easy_cpu_move(Board,Player,NewBoard) :-
     % Select a random piece from the list
     random_member((OldRow, OldCol), Pieces),
     % Get the valid moves for the selected piece
+    
     (player(Board, _, Player),
-    valid_jumper_moves(Board, OldRow, OldCol, Moves1)
+    valid_jumper_moves(Board, Player,OldRow, OldCol, Moves1)
     ;
     valid_slipper_moves(Board, Player,OldRow, OldCol, Moves2)),
     % Get all moves
@@ -137,47 +131,48 @@ make_easy_cpu_move(Board,Player,NewBoard) :-
 
 value(Board, Player, Value) :-
     % Find the number of moves available for the current player
+
     valid_moves(Board, Player, PlayerMoves),
     length(PlayerMoves, NumPlayerMoves),
-
+    
     other_player(Player,OtherPlayer),
 
     % Find the number of moves available for the other player
     valid_moves(Board, OtherPlayer, OtherPlayerMoves),
+    count_jumpers(Board, OtherPlayer, NumJumpersOtherPlayer),
     length(OtherPlayerMoves, NumOtherPlayerMoves),
 
     % Calculate the score
-    Value is NumPlayerMoves - NumOtherPlayerMoves.
+    Value is NumPlayerMoves - NumOtherPlayerMoves  - NumJumpersOtherPlayer * 2.
 
 get_best_moves(Board, Player, BestMoves) :-
     % Find all the pieces belonging to the given player
     get_player_pieces(Board,Player,Pieces),
-    get_best_move_for_all_pieces(Board, Player, Pieces, BestMoves,BM).
+    get_best_move_for_all_pieces(Board, Player, Pieces,[], BestMoves).
 
 get_best_move_for_all_pieces(_, _, [], Acc,Acc) :- !.
-get_best_move_for_all_pieces(Board, Player, [(Row, Col)|RestPieces],BestMoves,Acc) :-
+get_best_move_for_all_pieces(Board, Player, [(Row, Col)|RestPieces],Acc, BestMoves) :-
     % Get the possible moves for the current piece
-    valid_jumper_moves(Board, Player, Row, Col, Moves1),
-    valid_slipper_moves(Board, Player, Row, Col, Moves2),
-    append(Moves1, Moves2, Moves),
+    (valid_jumper_moves(Board, Player, Row, Col, Moves);
+    valid_slipper_moves(Board, Player, Row, Col, Moves)),
     % Find the best move and value for the current piece
     get_best_move_for_piece(Board, Player, Row, Col, Moves, [], -9999, NewBestMove, NewBestValue),
-    append(Acc,[(NewBestValue,NewBestMove)],NewAcc),
-    get_best_move_for_all_pieces(Board,Player,RestPieces,BestMoves,NewAcc),!.
+    get_best_move_for_all_pieces(Board,Player,RestPieces,[(NewBestValue,NewBestMove)|Acc],BestMoves),!.
     
 get_best_move_for_piece(Board, Player, Row, Col,Moves, BestMove, BestValueSoFar, BestMoveOut,BestValueOut) :-
     % If the list of moves is empty, return the best move and value seen so far
     (Moves = [] -> BestMoveOut = BestMove , BestValueOut = BestValueSoFar;
-     % Otherwise, get the first move in the list
+
      Moves = [(NewRow, NewCol)|RestMoves],
-     % Make a copy of the board and make the move on the copy
-     copy_board(Board, BoardCopy),
-     make_move(BoardCopy, Player, Row, Col, NewRow, NewCol, BoardCopy2),
-     % Calculate the value of the board after the move
-     value(BoardCopy2, Player, Value),
+    
+     make_move(Board, Player, Row, Col, NewRow, NewCol, Board2),
+
+     value(Board2, Player, Value),
+
      % If the value of the board is higher than the current best value, update the best value and best move
      (Value > BestValueSoFar -> NewBestMove = [(Row,Col),(NewRow, NewCol)], NewBestValue = Value ; NewBestMove = BestMove, NewBestValue = BestValueSoFar),
      % Recursively find the best move for the remaining moves in the list
+     
      get_best_move_for_piece(Board, Player, Row, Col, RestMoves,NewBestMove, NewBestValue, BestMoveOut,BestValueOut)
     ).
 
@@ -192,33 +187,48 @@ filterMoves(List, FilteredList):-
     first_weight(SortedList,MaxWeight),
     remove_non_max_weights(SortedList,MaxWeight,[],FilteredList).
 
-make_hard_cpu_move(Board,Player,NewBoard) :-
-    get_best_moves(Board,Player,BestMoves),
-    choose_cpu_hard_move(BestMoves,OldRow,OldCol,NewRow,NewCol),
-    make_move(Board,Player,OldRow,OldCol,NewRow,NewCol,NewBoard).
+make_hard_cpu_move(Board, Player, NewBoard) :-
+    get_best_moves(Board, Player, BestMoves),
+    (BestMoves = [(-9999,[])] ->
+        NewBoard = Board
+    ;
+        choose_cpu_hard_move(BestMoves, OldRow, OldCol, NewRow, NewCol),
+        make_move(Board, Player, OldRow, OldCol, NewRow, NewCol, NewBoard)
+    ).
+
   
         
-quicksort([], []).
-quicksort([(Weight, Value)|Tail], SortedList) :-
-    split(Tail, (Weight, Value), Left, Right),
-    quicksort(Left, SortedLeft),
-    quicksort(Right, SortedRight),
-    append(SortedRight, [(Weight, Value)|SortedLeft], SortedList).
-
-split([], _, [], []).
-split([(Weight, Value)|Tail], (PivotWeight, PivotValue), [(Weight, Value)|Left], Right) :-
-    Weight @=< PivotWeight,
-    split(Tail, (PivotWeight, PivotValue), Left, Right).
-split([(Weight, Value)|Tail], (PivotWeight, PivotValue), Left, [(Weight, Value)|Right]) :-
-    Weight @> PivotWeight,
-    split(Tail, (PivotWeight, PivotValue), Left, Right).
 
 
-remove_non_max_weights([], _, Result, Result).
-remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
-Weight =:= MaxWeight,
-remove_non_max_weights(Tail,MaxWeight,[(Weight,Value)|Acc],Result).
+game4(Board):-
+    game_over(Board),!.
 
-remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
-Weight @< MaxWeight,
-remove_non_max_weights(Tail,MaxWeight,Acc,Result).
+game4(Board):-  %CPU HARD VS CPU HARD
+    display_game(Board),
+    current_player(Player),
+    
+    make_hard_cpu_move(Board,Player,Board2),
+    other_player(Player,OtherPlayer),
+    retractall(current_player(_)),
+    assert(current_player(OtherPlayer)),
+    
+    %sleep(1),
+    game4(Board2).
+
+
+%game4(Board):- CPU HARD VS CPU EASY
+%    display_game(Board),
+%    current_player(Player),
+%    
+%    make_hard_cpu_move(Board,Player,Board2),
+%    other_player(Player,OtherPlayer),
+%    retractall(current_player(_)),
+%    assert(current_player(OtherPlayer)),
+%    make_easy_cpu_move(Board2,OtherPlayer,Board3),
+%    retractall(current_player(_)),
+%    assert(current_player(Player)),
+%    sleep(1),
+%    game4(Board3).
+
+
+
