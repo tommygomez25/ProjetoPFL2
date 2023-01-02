@@ -41,7 +41,7 @@ manageInput(51) :-
 
 manageInput(52) :-
     clear,
-    write('Choose CPU levels (1- EASY vs EASY ; 2 - EASY vs HARD ; 3 - HARD vs HARD\n'),nl,repeat,
+    write('Choose CPU levels (1- EASY vs EASY ; 2 - EASY vs HARD ; 3 - HARD vs HARD):'),nl,repeat,
     get_code(Input),
     manageInputLevelCPUCPU(Input).
 
@@ -50,7 +50,6 @@ manageInputLevelPlayerCPU(49) :-
     initBoard(Board),
     retractall(current_player(_)),
     assert(current_player(red)),
-    display_game(Board),
     game2(Board).
 
 manageInputLevelPlayerCPU(50) :-
@@ -58,7 +57,6 @@ manageInputLevelPlayerCPU(50) :-
     initBoard(Board),
     retractall(current_player(_)),
     assert(current_player(red)),
-    display_game(Board),
     game3(Board).
 
 manageInputLevelCPUPlayer(49) :-
@@ -73,7 +71,7 @@ manageInputLevelCPUPlayer(50) :-
     initBoard(Board),
     retractall(current_player(_)),
     assert(current_player(red)),
-    game5(Board).
+    game7(Board).
 
 manageInputLevelCPUCPU(49) :-
     write('Starting EASY CPU vs EASY CPU MODE'),nl,

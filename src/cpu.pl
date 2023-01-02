@@ -49,7 +49,7 @@ game2(Board):-
         % Continue the game loop
         game2(Board3)
         ;
-        % If the piece doesn't belong to the current player, prompt the user to choose another piece
+        % If the piece doesn''t belong to the current player, prompt the user to choose another piece
         format('~nChoose a piece that belongs to you.~n', []),
         game2(Board)).
 %-------------------------------------------------------------------------------------------------------%
@@ -131,11 +131,11 @@ game4(Board):-
     display_game(Board),
     current_player(Player),
     
-    choose_cpu_move(Board,Player,2,Board2),
+    choose_cpu_move(Board,Player,1,Board2),
     other_player(Player,OtherPlayer),
     retractall(current_player(_)),
     assert(current_player(OtherPlayer)),
-    choose_cpu_move(Board2,OtherPlayer,1,Board3),
+    choose_cpu_move(Board2,OtherPlayer,2,Board3),
     retractall(current_player(_)),
     assert(current_player(Player)),
     %sleep(1),
@@ -385,7 +385,7 @@ choose_cpu_hard_move(Moves, OldRow, OldCol, NewRow, NewCol):-
     filterMoves(Moves,FilteredMoves),
     random_member((_,[(OldRow,OldCol),(NewRow, NewCol)]), FilteredMoves).
     
-    first_weight([(Weight, _)|_], Weight).
+first_weight([(Weight, _)|_], Weight).
 
 /*
 filterMoves(+List,-FilteredList)

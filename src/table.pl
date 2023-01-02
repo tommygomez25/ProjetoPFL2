@@ -1,13 +1,13 @@
-initBoard([[empty, empty, empty, empty, empty, empty, empty, empty, red_jumper, empty],
-             [empty, empty, empty, empty,empty,empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [black, empty, empty, empty,empty, empty, empty, empty, empty,empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty,empty],
-             [empty, empty, empty, empty, empty, empty, empty, empty, empty, empty]]).
+initBoard([[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty,empty, empty, empty, empty, empty,black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],
+             [red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],
+             [empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]).
 
 symbol(red_jumper, 'R').
 symbol(black_jumper,'B').

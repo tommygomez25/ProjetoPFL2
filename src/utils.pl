@@ -2,7 +2,7 @@ list_empty([], true).
 list_empty([_|_], false).
 
 /*
-piece_at(+Board,+Row,+Col,-Piece)
+piece_at(+Board,+Row,+Col,?Piece)
 Returns the piece at the given Row and Col in the Board
 */
 piece_at(Board,Row, Col, Piece) :-
@@ -19,7 +19,7 @@ valid_position(NumRows, NumCols, Row, Col) :-
   Col >= 0,
   Col < NumCols.
 
-letter_to_number(z,0).
+letter_to_number(x,0).
 letter_to_number(a,1).
 letter_to_number(b,2).
 letter_to_number(c,3).
@@ -33,7 +33,7 @@ letter_to_number(j,10).
 letter_to_number(z,11).
 
 /*
-get_coordinates(+Player,+X,+Y) 
+get_coordinates(+Player,-X,-Y) 
 Prompts the user to choose the coordinates of the piece it wishes to move */
 get_coordinates(Player,X, Y) :-
   repeat,
@@ -95,7 +95,7 @@ Prints the moves in the form (X,Y)
 */
 print_moves([]).
 print_moves([(X,Col)|T]) :-
-letter_to_number(Y,Col),
+  letter_to_number(Y,Col),
   write(' ('), write(X), write(','),write(Y),write(') '),
   print_moves(T).
 
@@ -143,7 +143,7 @@ split([(Weight, Value)|Tail], (PivotWeight, PivotValue), Left, [(Weight, Value)|
     split(Tail, (PivotWeight, PivotValue), Left, Right).
 
 /*
-remove_non_max_weights(+Moves,)
+remove_non_max_weights(+Moves,+MaxWeight,+Acc,-FilteredMoves)
 */
 remove_non_max_weights([], _, Result, Result).
 remove_non_max_weights([(Weight, Value)|Tail], MaxWeight, Acc, Result) :-
