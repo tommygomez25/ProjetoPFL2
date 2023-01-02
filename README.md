@@ -17,13 +17,17 @@
 > A representação interna do tabuleiro é feita através de uma lista de listas, onde cada elemento representa uma posição do tabuleiro. As peças são representadas por símbolos, como 'red' para os 'slippers' vermelhos, 'black' para os 'slippers pretos, 'red_jumper' para os saltadores vermelhos e 'black_jumper' para os saltadores pretos. O símbolo 'empty' é usado para representar posições vazias no tabuleiro.
 > Para representar o jogador atual é utilizado o predicado 'current_player/1'. Para alternar este predicado é feito o retract e o assert do mesmo com os valores que o 'Player' pode tomar (red ou black). 
 > #### Initial state 
->``` [[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty,empty, empty, empty, empty, empty,black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]  ``` 
+>``` [[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty,empty, empty, empty, empty, empty,black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty,empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, black_jumper]]  ```
 
+![Initial State](./initialstate.png)
 
 
 >  #### Intermediate state 
 >  ``` [[empty, empty, empty, empty, red_jumper, empty, empty, empty, empty, empty],[empty, empty, empty, empty,empty,empty, empty, empty, empty, black_jumper],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty,empty, black, empty, empty, empty,empty],[empty, empty, red_jumper, empty, empty, red_jumper, empty, empty, empty, empty],[empty, empty, empty, empty, empty, empty, empty, empty, empty, empty],[red_jumper, empty, empty, empty, empty, empty, empty, empty, empty, empty],[empty, empty, empty, empty, empty, black_jumper, empty, empty, empty, empty],[empty, empty, red_jumper, empty, empty, empty, empty, empty, empty,empty],[empty, empty, empty, empty, empty, black_jumper, empty, empty, empty, empty]] ``` 
 
+![Intermediate State](./intermediatestate.png)
+
 > #### Final state
 > ``` [[w-e,b-w,w-e,b-e,w-e,b-e,w-e,b-b,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-w,b-w,w-e,b-e,w-e,b-e,w-b,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-b,w-e,b-e,w-e,b-b,w-e,b-b], [w-w,b-e,w-e,b-b,w-e,b-e,w-e,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-e,b-e,w-e,b-e,w-e,b-b,w-e,b-e,w-e,b-e,w-e], [b-w,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e], [w-e,b-b,w-e,b-e,w-e,b-e,w-e,b-e,w-e,b-e,w-b]],w ``` 
-> ![Final State](./img/finalState.png) 
+
+![Final State](./finalstate.png)
